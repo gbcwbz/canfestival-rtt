@@ -1,0 +1,11 @@
+Import('rtconfig')
+import os
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('master402/*.c')
+CPPPATH = [GetCurrentDir() + '/master402']
+
+group = DefineGroup('CanFestival', src, depend = ['CANFESTIVAL_USING_EG_MASTER402'], CPPPATH = CPPPATH)
+
+Return('group')

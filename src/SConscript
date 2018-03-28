@@ -1,0 +1,22 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Split("""
+emcy.c
+lifegrd.c
+nmtMaster.c
+nmtSlave.c
+objacces.c
+pdo.c
+sdo.c
+states.c
+sync.c
+timer.c
+can_rtthread.c
+timer_rtthread.c
+""")
+CPPPATH = [GetCurrentDir() + '../inc']
+
+group = DefineGroup('CanFestival', src, depend = ['RT_USING_CAN', 'RT_USING_HWTIMER'], CPPPATH = CPPPATH)
+
+Return('group')
