@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "master402_od.h"
 #include "canopen_callback.h"
 #include "master402_canopen.h"
-#include "motor_control.h"
 
 /*****************************************************************************/
 void master402_heartbeatError(CO_Data* d, UNS8 heartbeatID)

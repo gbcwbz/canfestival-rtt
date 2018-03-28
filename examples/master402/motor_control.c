@@ -9,7 +9,6 @@
 #include <finsh.h>
 #endif
 
-#include "motor_control.h"
 #include "canfestival.h"
 #include "timers_driver.h"
 #include "master402_od.h"
@@ -42,9 +41,9 @@ void relative_move(int32_t position, int32_t speed)
 	target_position_607a = position;
 	profile_velocity_6081 = speed;
 
-	control_word_6040 = 06f;
+	control_word_6040 = 0x6f;
 	SYNC_DELAY;
-	control_word_6040 = 07f;
+	control_word_6040 = 0x7f;
 }
 #ifdef RT_USING_FINSH
 FINSH_FUNCTION_EXPORT_ALIAS(relative_move, relmove, relative move);

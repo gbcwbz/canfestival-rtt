@@ -15,7 +15,7 @@ timer.c
 can_rtthread.c
 timer_rtthread.c
 """)
-CPPPATH = [GetCurrentDir() + '../inc']
+CPPPATH = [GetCurrentDir() + '/../inc']
 
 group = DefineGroup('CanFestival', src, depend = ['RT_USING_CAN', 'RT_USING_HWTIMER'], CPPPATH = CPPPATH)
 

@@ -33,7 +33,7 @@ struct rt_can_filter_config filter1 =
 
 static struct can_app_struct can_data =
 {
-    CANFESTIVAL_CAN_DRIVER_NAME,
+    CANFESTIVAL_CAN_DEVICE_NAME,
     &filter1,
     RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
 };
