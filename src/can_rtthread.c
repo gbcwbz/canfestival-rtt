@@ -49,7 +49,7 @@ unsigned char canSend(CAN_PORT notused, Message *m)
 {
 	struct rt_can_msg msg;
 
-	msg.hdr = can_data.filter->items[1].hdr;
+	msg.hdr = can_data.filter->items[0].hdr;
 	msg.id = m->cob_id;
 	msg.ide = 0;
 	msg.rtr = m->rtr;
