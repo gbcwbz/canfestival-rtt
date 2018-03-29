@@ -28,7 +28,7 @@ static void config_single_servo(void *parameter);
 CO_Data *OD_Data = &master402_Data;
 s_BOARD agv_board  = {"0", "1M"};
 
-void canopen_init(void)
+int canopen_init(void)
 {
 	OD_Data->heartbeatError = master402_heartbeatError;
 	OD_Data->initialisation = master402_initialisation;
@@ -45,7 +45,10 @@ void canopen_init(void)
 
 	// Start timer thread
 	StartTimerLoop(&InitNodes);
+	
+	return 0;
 }
+INIT_APP_EXPORT(canopen_init);
 
 void InitNodes(CO_Data* d, UNS32 id)
 {
