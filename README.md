@@ -6,7 +6,7 @@ Forked from the CanFestival-3 project https://bitbucket.org/Mongo/canfestival-3-
 
 ## 1、介绍
 
-此 package 是 Canfestival (一个开源的CANopen协议栈)在 RT-Thread 系统上的移植。使用了
+此 package 是 Canfestival (一个开源的 CANopen 协议栈)在 RT-Thread 系统上的移植。使用了
  RT-Thread 的 CAN 驱动和 hwtimer 驱动，从而可以运行于所有提供了这两个驱动的平台。
 同时提供了 CANopen 的一些示例，力图做到开箱即用。
 
@@ -18,7 +18,6 @@ Forked from the CanFestival-3 project https://bitbucket.org/Mongo/canfestival-3-
 | examples | 例子目录，Master402 为 DS402 主站示例，用于控制伺服电机|
 | inc  | 头文件目录 |
 | src  | 源代码目录 |
-| port | 移植代码目录。如果没有移植代码，可以不需要 |
 
 ### 1.2 许可证
 
@@ -60,7 +59,7 @@ RT-Thread online packages
 
 ## 4、注意事项
 
- CAN驱动必须支持硬件滤波，本 package 只使用第 1 个滤波器。 
+ CAN驱动必须支持硬件滤波，Canfestival 只使用第 1 个滤波器。 
 
 ## 5、联系方式 & 感谢
 
