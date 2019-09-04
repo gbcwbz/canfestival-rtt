@@ -48,6 +48,7 @@ static void canopen_timer_thread_entry(void* parameter)
 	{
 		rt_sem_take(canfstvl_timer_sem, RT_WAITING_FOREVER);
 		EnterMutex();
+        rt_device_read(canfstvl_timer_dev, 0, &last_timer_val, sizeof(last_timer_val));
 		TimeDispatch();
 		LeaveMutex();
 	}
@@ -56,7 +57,6 @@ static void canopen_timer_thread_entry(void* parameter)
 
 static rt_err_t timer_timeout_cb(rt_device_t dev, rt_size_t size)
 {
-    rt_device_read(canfstvl_timer_dev, 0, &last_timer_val, sizeof(last_timer_val));
 	rt_sem_release(canfstvl_timer_sem);
     
     return RT_EOK;
