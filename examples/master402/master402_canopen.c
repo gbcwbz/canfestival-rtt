@@ -65,7 +65,7 @@ static void slaveBootupHdl(CO_Data* d, UNS8 nodeId)
 {
 	rt_thread_t tid;
 
-	tid = rt_thread_create("co_cfg", config_single_servo, (void *)nodeId, 1024, 12 + nodeId, 2);
+	tid = rt_thread_create("co_cfg", config_single_servo, (void *)(int)nodeId, 1024, 12 + nodeId, 2);
 	if(tid == RT_NULL)
 	{
 		rt_kprintf("canopen config thread start failed!\n");

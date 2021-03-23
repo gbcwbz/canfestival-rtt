@@ -21,7 +21,16 @@ static CO_Data * OD_Data = RT_NULL;
 
 struct rt_can_filter_item filter1item[1] =
 {
-	RT_CAN_FILTER_ITEM_INIT(0x180, 0, 0, 1, 0, can1ind, &can_data.event)
+	{
+	    .id = 0x180,
+	    .ide = 0,
+	    .rtr = 0,
+	    .mode = 1,
+	    .mask = 0,  // no filter, receive all messages
+	    .hdr = 1,
+	    .ind = can1ind,
+	    .args = &can_data.event
+	}
 };
 
 struct rt_can_filter_config filter1 =

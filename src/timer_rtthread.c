@@ -1,4 +1,3 @@
-#include <stm32f10x.h>
 #include <stdbool.h>
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -104,7 +103,7 @@ void StartTimerLoop(TimerCallback_t _init_callback)
 {
 	init_callback = _init_callback;
 	EnterMutex();
-	SetAlarm(NULL, 0, init_callback, 0, 0);
+	SetAlarm(NULL, 0, init_callback, 5, 0);
 	LeaveMutex();
 }
 

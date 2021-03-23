@@ -50,12 +50,6 @@ repeat
 #define REPEAT_NMT_MAX_NODE_ID_TIMES(repeat)\
 repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat
 
-//#define REPEAT_SDO_MAX_SIMULTANEOUS_TRANSFERTS_TIMES(repeat)\
-//repeat
-//#define REPEAT_NMT_MAX_NODE_ID_TIMES(repeat)\
-//repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat repeat
-
-
 #define EMCY_MAX_ERRORS 8
 #define REPEAT_EMCY_MAX_ERRORS_TIMES(repeat)\
 repeat repeat repeat repeat repeat repeat repeat repeat
