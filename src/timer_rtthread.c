@@ -27,6 +27,12 @@ void setTimer(TIMEVAL value)
 	
 	val.sec = value / 1000000;
 	val.usec = value % 1000000;
+	/// Avoid invalid 0 timeout.
+	/// See here for detailed reference: https://club.rt-thread.org/ask/question/11194.html .
+	if(val.usec < MIN_TIMER_TIMEOUT_US){
+		val.usec = MIN_TIMER_TIMEOUT_US;
+	}
+
 	last_timer_val.sec = 0;
 	last_timer_val.usec = 0;
 	rt_device_write(canfstvl_timer_dev, 0, &val, sizeof(val));
