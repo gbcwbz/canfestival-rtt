@@ -35,6 +35,10 @@ void servo_on(uint8_t nodeId)
 FINSH_FUNCTION_EXPORT(servo_on, set servo on);
 #endif
 
+#ifdef RT_USING_MSH
+MSH_CMD_EXPORT(servo_on, set servo on);
+#endif
+
 
 void relative_move(int32_t position, int32_t speed)
 {
@@ -49,6 +53,10 @@ void relative_move(int32_t position, int32_t speed)
 FINSH_FUNCTION_EXPORT_ALIAS(relative_move, relmove, relative move);
 #endif
 
+#ifdef RT_USING_MSH
+MSH_CMD_EXPORT(relative_move, relative move);
+#endif
+
 void motorstate(void)
 {
 	rt_kprintf("ControlWord 0x%0X\n", control_word_6040);
@@ -58,4 +66,8 @@ void motorstate(void)
 }
 #ifdef RT_USING_FINSH
 FINSH_FUNCTION_EXPORT(motorstate, print motor state);
+#endif
+
+#ifdef RT_USING_MSH
+MSH_CMD_EXPORT(motorstate, print motor state on canbus);
 #endif
