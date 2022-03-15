@@ -112,6 +112,7 @@ static void config_servo(uint8_t nodeId)
 	config_servo_param(nodeId, &servo_conf[nodeId - 2]);
 	LeaveMutex();
 	rt_sem_take(&(servo_conf[nodeId - 2].finish_sem), RT_WAITING_FOREVER);
+	rt_sem_detach(&(servo_conf[nodeId - 2].finish_sem));
 }
 
 static void config_single_servo(void *parameter)
