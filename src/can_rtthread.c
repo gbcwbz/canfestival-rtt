@@ -8,49 +8,20 @@
 struct can_app_struct
 {
     const char *name;
-    struct rt_can_filter_config *filter;
-    rt_uint8_t eventopt;
-    struct rt_event event;
+    struct rt_semaphore sem;
 };
-
-static rt_err_t  can1ind(rt_device_t dev,  void *args, rt_int32_t hdr, rt_size_t size);
 
 static rt_device_t candev = RT_NULL;
-static struct can_app_struct can_data;
 static CO_Data * OD_Data = RT_NULL;
-
-struct rt_can_filter_item filter1item[1] =
-{
-	{
-	    .id = 0x180,
-	    .ide = 0,
-	    .rtr = 0,
-	    .mode = 1,
-	    .mask = 0,  // no filter, receive all messages
-	    .hdr = 1,
-	    .ind = can1ind,
-	    .args = &can_data.event
-	}
-};
-
-struct rt_can_filter_config filter1 =
-{
-    1,
-    1,
-    filter1item,
-};
 
 static struct can_app_struct can_data =
 {
-    CANFESTIVAL_CAN_DEVICE_NAME,
-    &filter1,
-    RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
+    CANFESTIVAL_CAN_DEVICE_NAME
 };
 
-static rt_err_t  can1ind(rt_device_t dev,  void *args, rt_int32_t hdr, rt_size_t size)
+static rt_err_t  can1ind(rt_device_t dev,  rt_size_t size)
 {
-    rt_event_t pevent = (rt_event_t)args;
-    rt_event_send(pevent, 1 << (hdr));
+    rt_sem_release(&can_data.sem);
     return RT_EOK;
 }
 
@@ -58,7 +29,6 @@ unsigned char canSend(CAN_PORT notused, Message *m)
 {
 	struct rt_can_msg msg;
 
-	msg.hdr = can_data.filter->items[0].hdr;
 	msg.id = m->cob_id;
 	msg.ide = 0;
 	msg.rtr = m->rtr;
@@ -74,28 +44,18 @@ void canopen_recv_thread_entry(void* parameter)
 {
     struct can_app_struct *canpara = (struct can_app_struct *) parameter;
 	struct rt_can_msg msg;
-    rt_uint32_t e;
 	Message co_msg;
 
     candev = rt_device_find(canpara->name);
     RT_ASSERT(candev);
-    rt_event_init(&canpara->event, canpara->name, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&can_data.sem, "co-rx", 0, RT_IPC_FLAG_FIFO);
     rt_device_open(candev, (RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX));
-    rt_device_control(candev, RT_CAN_CMD_SET_FILTER, canpara->filter);
+    rt_device_set_rx_indicate(candev, can1ind);
 
     while (1)
     {
-        if (rt_event_recv(&canpara->event,
-                          (1 << canpara->filter->items[0].hdr),
-                          canpara->eventopt,
-                          RT_WAITING_FOREVER, &e) != RT_EOK)
+        if (rt_sem_take(&can_data.sem, RT_WAITING_FOREVER) == RT_EOK)
         {
-            continue;
-        }
-
-		if (e & (1 << canpara->filter->items[0].hdr))
-		{
-			msg.hdr = canpara->filter->items[0].hdr;
 			while (rt_device_read(candev, 0, &msg, sizeof(msg)) == sizeof(msg))
 			{
 				co_msg.cob_id = msg.id;
