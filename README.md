@@ -46,8 +46,8 @@ RT-Thread online packages
 在 menuconfig 中打开 CAN 驱动和 hwtimer驱动
 并且在  CanFestival config 中配置好 CAN 驱动的 device name, 以及 hwtimer 驱动的 device name
 ```
-(bxcan1) CAN device name for CanFestival
-(timer0) hwtimer device name for CanFestival
+(can1) CAN device name for CanFestival
+(timer1) hwtimer device name for CanFestival
 (9) The priority level value of can receive thread
 (10) The priority level value of timer thread
 [*] Enable Cia402 Master example
@@ -56,10 +56,6 @@ RT-Thread online packages
 选择需要使用的例子。
 
 在打开 Canfestival package 后，当进行 bsp 编译时，它会被加入到 bsp 工程中进行编译。
-
-## 4、注意事项
-
- CAN驱动必须支持硬件滤波，Canfestival 只使用第 1 个滤波器。 
 
 ## 5、联系方式 & 感谢
 
