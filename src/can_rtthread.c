@@ -13,11 +13,22 @@ struct can_app_struct
 
 static rt_device_t candev = RT_NULL;
 static CO_Data * OD_Data = RT_NULL;
+static rt_mutex_t canfstvl_mutex = RT_NULL;
 
 static struct can_app_struct can_data =
 {
     CANFESTIVAL_CAN_DEVICE_NAME
 };
+
+void EnterMutex(void)
+{
+	rt_mutex_take(canfstvl_mutex, RT_WAITING_FOREVER);
+}
+
+void LeaveMutex(void)
+{
+	rt_mutex_release(canfstvl_mutex);
+}
 
 static rt_err_t  can1ind(rt_device_t dev,  rt_size_t size)
 {
@@ -73,6 +84,7 @@ void canopen_recv_thread_entry(void* parameter)
 CAN_PORT canOpen(s_BOARD *board, CO_Data * d)
 {
 	rt_thread_t tid;
+	canfstvl_mutex = rt_mutex_create("canfstvl",RT_IPC_FLAG_FIFO);
     
 	OD_Data = d;
     tid = rt_thread_create("cf_recv",

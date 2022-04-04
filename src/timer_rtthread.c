@@ -5,21 +5,11 @@
 #include "timer.h"
 
 
-/************************** Modul variables **********************************/
-static rt_mutex_t canfstvl_mutex = RT_NULL;
+/************************** Module variables **********************************/
 static rt_sem_t canfstvl_timer_sem = RT_NULL;
 static rt_device_t canfstvl_timer_dev=RT_NULL;
 static rt_hwtimerval_t last_timer_val;
 
-void EnterMutex(void)
-{
-	rt_mutex_take(canfstvl_mutex, RT_WAITING_FOREVER);
-}
-
-void LeaveMutex(void)
-{
-	rt_mutex_release(canfstvl_mutex);
-}
 
 void setTimer(TIMEVAL value)
 {
@@ -75,7 +65,6 @@ void initTimer(void)
 	rt_hwtimer_mode_t mode;
 	int freq = 1000000;
 
-	canfstvl_mutex = rt_mutex_create("canfstvl",RT_IPC_FLAG_FIFO);
 	canfstvl_timer_sem = rt_sem_create("canfstvl", 0, RT_IPC_FLAG_FIFO);
 
 	canfstvl_timer_dev = rt_device_find(CANFESTIVAL_TIMER_DEVICE_NAME);
