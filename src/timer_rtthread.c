@@ -3,6 +3,7 @@
 #include <rtdevice.h>
 #include "canfestival.h"
 #include "timer.h"
+#include "timers_driver.h"
 
 
 /************************** Module variables **********************************/
