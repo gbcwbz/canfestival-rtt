@@ -23,10 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #ifndef __can_driver_h__
 #define __can_driver_h__
 
-struct struct_s_BOARD;
-
-typedef struct struct_s_BOARD s_BOARD;
-
 #include "applicfg.h"
 #include "can.h"
 
@@ -35,15 +31,10 @@ typedef struct struct_s_BOARD s_BOARD;
  * @ingroup can
  */
 
-//struct struct_s_BOARD {
-//  char busname[100]; /**< The bus name on which the CAN board is connected */
-//  char baudrate[4]; /**< The board baudrate */
-//};
-
-struct struct_s_BOARD {
+typedef struct {
   char * busname;  /**< The bus name on which the CAN board is connected */
   char * baudrate; /**< The board baudrate */
-};
+} s_BOARD;
 
 #ifndef DLL_CALL
 #if !defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)
