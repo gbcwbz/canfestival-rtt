@@ -18,56 +18,91 @@
 #define PROFILE_POSITION_MODE 1
 #define ENCODER_RES (2500 * 4)
 
-void servo_on(uint8_t nodeId)
-{
-	UNS32 speed;
+#define CONTROL_WORD_DISABLE_VOLTAGE 0x00
+#define CONTROL_WORD_SHUTDOWN 0x06
+#define CONTROL_WORD_SWITCH_ON 0x07
+#define CONTROL_WORD_ENABLE_OPERATION 0x0F
 
-	speed = ENCODER_RES * 30;
-	modes_of_operation_6060 = PROFILE_POSITION_MODE;
-	profile_velocity_6081 = speed;
-	target_position_607a = 0;
+#define STATUS_WORD_TARGET_REACHED_BIT (1 << 10)
+#define STATUS_WORD_FOLLOWING_ERROR_BIT (1 << 12)
 
-	control_word_6040 = 0x06;
-	SYNC_DELAY;
-	control_word_6040 = 0x0f;
-}
-#ifdef RT_USING_FINSH
-FINSH_FUNCTION_EXPORT(servo_on, set servo on);
-#endif
+// bits for Profile Position mode
+#define CONTROL_WORD_NEW_SETPOINT_BIT (1 << 4)
+#define CONTROL_WORD_CHANGE_SET_IMMEDIATELY_BIT (1 << 5)
+#define CONTROL_WORD_CHANGE_RELATIVE_BIT (1 << 6)
+#define STATUS_WORD_SETPOINT_ACKNOWLEDGE_BIT (1 << 12)
 
 #ifdef RT_USING_MSH
-MSH_CMD_EXPORT(servo_on, set servo on);
-#endif
-
-
-void relative_move(int32_t position, int32_t speed)
+static void cmd_motor_on(int argc, char* argv[])
 {
+    int nodeId = 1;
+    if(argc > 1) {
+        nodeId = atoi(argv[1]);
+    }
+    (void)nodeId;
+
+	modes_of_operation_6060 = PROFILE_POSITION_MODE;
+	profile_velocity_6081 = 0;
+	target_position_607a = 0;
+
+	control_word_6040 = CONTROL_WORD_SHUTDOWN;
+	SYNC_DELAY;
+	control_word_6040 = CONTROL_WORD_SWITCH_ON;
+	SYNC_DELAY;
+	control_word_6040 = CONTROL_WORD_ENABLE_OPERATION;
+}
+MSH_CMD_EXPORT_ALIAS(cmd_motor_on, motor_on, power on motor driver);
+
+static void cmd_motor_off(int argc, char* argv[])
+{
+    int nodeId = 1;
+    if(argc > 1) {
+        nodeId = atoi(argv[1]);
+    }
+    (void)nodeId;
+
+
+	control_word_6040 = CONTROL_WORD_SHUTDOWN;
+	SYNC_DELAY;
+	control_word_6040 = CONTROL_WORD_DISABLE_VOLTAGE;
+}
+MSH_CMD_EXPORT_ALIAS(cmd_motor_off, motor_off, power off motor driver);
+
+
+static void cmd_motor_relmove(int argc, char* argv[])
+{
+    int32_t position = 0;
+    int32_t speed = 20;
+
+    if(argc < 2) {
+        rt_kprintf("Usage: motor_relmove [position] <speed>\n");
+    }
+
+    position = atoi(argv[1]);
+    if(argc > 2) {
+        speed = atoi(argv[2]);
+    }
+
+    rt_kprintf("move to position: %d, speed: %d\n", position, speed);
+
+
 	target_position_607a = position;
 	profile_velocity_6081 = speed;
 
-	control_word_6040 = 0x6f;
 	SYNC_DELAY;
-	control_word_6040 = 0x7f;
+	control_word_6040 = (CONTROL_WORD_ENABLE_OPERATION);
+	SYNC_DELAY;
+	control_word_6040 = 0x6f;
 }
-#ifdef RT_USING_FINSH
-FINSH_FUNCTION_EXPORT_ALIAS(relative_move, relmove, relative move);
-#endif
+MSH_CMD_EXPORT_ALIAS(cmd_motor_relmove, motor_relmove, move motor to relative position);
 
-#ifdef RT_USING_MSH
-MSH_CMD_EXPORT(relative_move, relative move);
-#endif
-
-void motorstate(void)
+static void cmd_motor_state(void)
 {
 	rt_kprintf("ControlWord 0x%0X\n", control_word_6040);
 	rt_kprintf("StatusWord 0x%0X\n", status_word_6041);
 	rt_kprintf("current position %d\n", position_actual_value_6063);
 	rt_kprintf("current speed %d\n", velocity_actual_value_606c);
 }
-#ifdef RT_USING_FINSH
-FINSH_FUNCTION_EXPORT(motorstate, print motor state);
-#endif
+MSH_CMD_EXPORT_ALIAS(cmd_motor_state, motor_state, print states of motors);
 
-#ifdef RT_USING_MSH
-MSH_CMD_EXPORT(motorstate, print motor state on canbus);
 #endif
