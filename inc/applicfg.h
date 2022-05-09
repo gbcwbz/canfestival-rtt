@@ -55,17 +55,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "can.h"
 
+#if defined(DEBUG_ERR_CONSOLE_ON) || defined(DEBUG_WAR_CONSOLE_ON)
+#define DBG_TAG "app.CANopen"
+#define DBG_LVL DBG_LOG
+#include <rtdbg.h>
+#endif
+
 // MSG functions
 // not finished, the strings have to be placed to the flash and printed out 
 // using the printf_P function
 /// Definition of MSG_ERR
 // ---------------------
 #ifdef DEBUG_ERR_CONSOLE_ON
-#define MSG_ERR(num, str, val)      \
-          printf(num, ' ');	\
-          printf(str);		\
-          printf(val);		\
-          printf('\n');
+#define MSG_ERR(num, str, val)  LOG_E("0x%04X %s %d", num, str, val)
 #else
 #    define MSG_ERR(num, str, val)
 #endif
@@ -73,11 +75,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /// Definition of MSG_WAR
 // ---------------------
 #ifdef DEBUG_WAR_CONSOLE_ON
-#define MSG_WAR(num, str, val)      \
-          printf(num, ' ');	\
-          printf(str);		\
-          printf(val);		\
-          printf('\n');
+#define MSG_WAR(num, str, val)  LOG_W("0x%04X %s %d", num, str, val)
 #else
 #    define MSG_WAR(num, str, val)
 #endif
