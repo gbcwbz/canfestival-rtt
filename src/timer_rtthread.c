@@ -26,7 +26,9 @@ void setTimer(TIMEVAL value)
 
 	last_timer_val.sec = 0;
 	last_timer_val.usec = 0;
-	rt_device_write(canfstvl_timer_dev, 0, &val, sizeof(val));
+	if(rt_device_write(canfstvl_timer_dev, 0, &val, sizeof(val)) == 0) {
+        LOG_E("CANopen set timer failed, err = %d", rt_get_errno());
+	}
 }
 
 TIMEVAL getElapsedTime(void)
@@ -42,10 +44,18 @@ static void canopen_timer_thread_entry(void* parameter)
 {	
 	while(1)
 	{
-		rt_sem_take(canfstvl_timer_sem, RT_WAITING_FOREVER);
+		if(rt_sem_take(canfstvl_timer_sem, RT_WAITING_FOREVER) != RT_EOK) {
+            LOG_E("canfestival take timer sem failed");
+            return;
+		}
+
 		EnterMutex();
-		rt_device_read(canfstvl_timer_dev, 0, &last_timer_val, sizeof(last_timer_val));
-		TimeDispatch();
+		rt_size_t read_size = rt_device_read(canfstvl_timer_dev, 0, &last_timer_val, sizeof(last_timer_val));
+		if( read_size == 0) {
+            LOG_E("canfestival read timer failed, err = %d", rt_get_errno());
+		} else {
+            TimeDispatch();
+		}
 		LeaveMutex();
 	}
 }
@@ -66,7 +76,7 @@ void initTimer(void)
 	rt_hwtimer_mode_t mode;
 	int freq = 1000000;
 
-	canfstvl_timer_sem = rt_sem_create("canfstvl", 0, RT_IPC_FLAG_FIFO);
+	canfstvl_timer_sem = rt_sem_create("canfstvl", 0, RT_IPC_FLAG_PRIO);
 
 	canfstvl_timer_dev = rt_device_find(CANFESTIVAL_TIMER_DEVICE_NAME);
 	RT_ASSERT(canfstvl_timer_dev != RT_NULL);
