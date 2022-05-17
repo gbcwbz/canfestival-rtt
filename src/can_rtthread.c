@@ -5,6 +5,10 @@
 #include "canfestival.h"
 #include "timers_driver.h"
 
+#define DBG_TAG "app.CANopen"
+#define DBG_LVL DBG_LOG
+#include <rtdbg.h>
+
 #define MAX_MUTEX_WAIT_TIME 5000
 #define MAX_SEM_WAIT_TIME 5000
 

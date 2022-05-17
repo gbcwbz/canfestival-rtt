@@ -55,11 +55,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "can.h"
 
-#if defined(DEBUG_ERR_CONSOLE_ON) || defined(DEBUG_WAR_CONSOLE_ON)
-#define DBG_TAG "app.CANopen"
-#define DBG_LVL DBG_LOG
-#include <rtdbg.h>
-#endif
 
 // MSG functions
 // not finished, the strings have to be placed to the flash and printed out 

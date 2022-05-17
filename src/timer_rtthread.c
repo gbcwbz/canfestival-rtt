@@ -5,6 +5,10 @@
 #include "timer.h"
 #include "timers_driver.h"
 
+#define DBG_TAG "app.CANopen"
+#define DBG_LVL DBG_LOG
+#include <rtdbg.h>
+
 
 /************************** Module variables **********************************/
 static rt_sem_t canfstvl_timer_sem = RT_NULL;
