@@ -22,6 +22,10 @@ static rt_device_t candev = RT_NULL;
 static CO_Data * OD_Data = RT_NULL;
 static rt_mutex_t canfstvl_mutex = RT_NULL;
 
+static struct rt_thread canopen_recv_thread;
+ALIGN(RT_ALIGN_SIZE) RT_SECTION(".ccm")
+static char canopen_recv_thread_stack[1024];
+
 static struct can_app_struct can_data =
 {
     CANFESTIVAL_CAN_DEVICE_NAME
@@ -128,14 +132,14 @@ void canopen_recv_thread_entry(void* parameter)
 
 CAN_PORT canOpen(s_BOARD *board, CO_Data * d)
 {
-	rt_thread_t tid;
 	canfstvl_mutex = rt_mutex_create("canfstvl",RT_IPC_FLAG_PRIO);
     
 	OD_Data = d;
-    tid = rt_thread_create("cf_recv",
+    rt_err_t err = rt_thread_init(&canopen_recv_thread, "cf_recv",
                            canopen_recv_thread_entry, &can_data,
-                           1024, CANFESTIVAL_RECV_THREAD_PRIO, 20);
-    if (tid != RT_NULL) rt_thread_startup(tid);
+                           &canopen_recv_thread_stack[0], sizeof(canopen_recv_thread_stack),
+                           CANFESTIVAL_RECV_THREAD_PRIO, 20);
+    if (err == RT_EOK) rt_thread_startup(&canopen_recv_thread);
 
     return 0;
 }

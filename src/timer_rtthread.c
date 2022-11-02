@@ -15,6 +15,10 @@ static rt_sem_t canfstvl_timer_sem = RT_NULL;
 static rt_device_t canfstvl_timer_dev=RT_NULL;
 static rt_hwtimerval_t last_timer_val;
 
+static struct rt_thread canopen_timer_thread;
+ALIGN(RT_ALIGN_SIZE) RT_SECTION(".ccm")
+static char canopen_timer_thread_stack[1024];
+
 
 void setTimer(TIMEVAL value)
 {
@@ -75,7 +79,6 @@ static rt_err_t timer_timeout_cb(rt_device_t dev, rt_size_t size)
 
 void initTimer(void)
 {
-	rt_thread_t tid;
 	rt_err_t err;
 	rt_hwtimer_mode_t mode;
 	int freq = 1000000;
@@ -101,10 +104,11 @@ void initTimer(void)
     err = rt_device_control(canfstvl_timer_dev, HWTIMER_CTRL_MODE_SET, &mode);
 	rt_device_read(canfstvl_timer_dev, 0, &last_timer_val, sizeof(last_timer_val));
 
-	tid = rt_thread_create("cf_timer",
+	err = rt_thread_init(&canopen_timer_thread,"cf_timer",
                            canopen_timer_thread_entry, RT_NULL,
-                           1024, CANFESTIVAL_TIMER_THREAD_PRIO, 20);
-    if (tid != RT_NULL) rt_thread_startup(tid);
+                           &canopen_timer_thread_stack[0],sizeof(canopen_timer_thread_stack),
+                           CANFESTIVAL_TIMER_THREAD_PRIO, 20);
+    if (err == RT_EOK) rt_thread_startup(&canopen_timer_thread);
 
 }
 
